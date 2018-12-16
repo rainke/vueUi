@@ -1,18 +1,33 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <VForm>
+      <VFormItem label="custom label" ref="formitem" :rules="rules.test">
+        <VInput type="text" v-model="txt" />
+      </VFormItem>
+    </VForm>
+    <div>{{txt}}</div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { Component, Vue, Emit, Mixins } from 'vue-property-decorator';
+import Emitter from '@/ui/mixins/Emitter';
 
 @Component({
-  components: {
-    HelloWorld,
-  },
+  name: 'Home'
 })
-export default class Home extends Vue {}
+export default class Home extends Mixins(Emitter) {
+  public static componentName: string = 'Home';
+  public txt: string = '';
+  public rules = {
+    test: {
+      pattern: /^\d+$/
+    }
+  };
+
+  @Emit() private handleInput() {
+    // this.$refs.formitem.$emit('on-form-change');
+    this.dispatch('VFormItem', 'on-form-change');
+  }
+}
 </script>
